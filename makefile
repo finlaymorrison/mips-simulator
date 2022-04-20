@@ -1,3 +1,6 @@
+include clean
+
+RM := rm -f
 CXX := g++
 CXXFLAGS := -I include
 
@@ -14,7 +17,7 @@ OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 all: $(EXE)
 
 clean:
-	$(RM) -rv $(BIN_DIR) $(OBJ_DIR)
+	$(RM) -r $(BIN_DIR) $(OBJ_DIR)
 
 $(EXE): $(OBJ) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
@@ -23,5 +26,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BIN_DIR) $(OBJ_DIR):
-	echo $(SRC)
 	mkdir -p $@
