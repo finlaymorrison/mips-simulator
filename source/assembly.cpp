@@ -1,6 +1,6 @@
 #include "assembly.h"
 
-std::vector<Bits<32>> parse_asm(std::vector<std::string> lines)
+std::vector<Bits<32>> parse_asm(const std::vector<std::string>& lines)
 {
     auto [cleaned_lines, labels] = prepare_asm(lines);
     return parse_cleaned_asm(cleaned_lines, labels);
@@ -15,8 +15,8 @@ std::pair<std::vector<std::string>, std::map<std::string, int>> prepare_asm(
     return std::make_pair(cleaned_raw, labels);
 }
 
-std::vector<Bits<32>> parse_cleaned_asm(std::vector<std::string> lines, 
-    std::map<std::string, int> labels)
+std::vector<Bits<32>> parse_cleaned_asm(const std::vector<std::string>& lines, 
+    const std::map<std::string, int>& labels)
 {
     std::vector<Bits<32>> parsed;
     int line_num = 0;
@@ -92,7 +92,7 @@ std::vector<std::string> remove_labels(const std::vector<std::string>& lines)
     return labels_removed;
 }
 
-Bits<32> parse_asm_line(std::string line, std::map<std::string, int> labels, int line_num)
+Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int>& labels, int line_num)
 {
     std::vector<std::string> parts = split_string(line, ' ');
 
@@ -103,13 +103,13 @@ Bits<32> parse_asm_line(std::string line, std::map<std::string, int> labels, int
     switch (ins_type)
     {
     case InsType::R:
-        success = parse_r_type(parts, line_num, word);
+        success = parse_r_type(parts, word);
         break;
     case InsType::I:
-        success = parse_i_type(parts, line_num, word);
+        success = parse_i_type(parts, line_num, labels, word);
         break;
     case InsType::J:
-        success = parse_j_type(parts, line_num, word);
+        success = parse_j_type(parts, line_num, labels, word);
         break;
     case InsType::NONE:
         throw AsmError("invalid opcode string");
@@ -126,7 +126,7 @@ Bits<32> parse_asm_line(std::string line, std::map<std::string, int> labels, int
 /*
  * 6:opcode, 5:source_reg_a, 5:source_reg_b, 5:dest_reg, 5:shamt, 6:funct
  */
-bool parse_r_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
+bool parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word)
 {
     int index = 0;
     for (int i = 0; i < get_reg_cnt(line[0]); ++i)
@@ -144,7 +144,7 @@ bool parse_r_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
 /*
  * 6:opcode, 5:source_reg, 5:dest_reg, 16:constant/address
  */
-bool parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
+bool parse_i_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word)
 {
     return true;
 }
@@ -152,7 +152,7 @@ bool parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
 /*
  * 6:opcode, 26:address
  */
-bool parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
+bool parse_j_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word)
 {
     return true;
 }
@@ -179,7 +179,7 @@ int get_reg_address(const std::string& reg_name)
     }
 }
 
-InsType add_opcode(std::string opcode_str, Bits<32>& word)
+InsType add_opcode(const std::string& opcode_str, Bits<32>& word)
 {
     int opcode = get_opcode(opcode_str);
     InsType ins_type = get_ins_type(opcode_str);
@@ -192,7 +192,7 @@ bool is_whitespace(char c)
     return c == ' ' || c == '\t';
 }
 
-std::vector<std::string> split_string(std::string str, char delim)
+std::vector<std::string> split_string(const std::string& str, char delim)
 {
     std::vector<std::string> split = {""};
     for (char c : str)

@@ -21,7 +21,7 @@ using Bits = std::array<bool, width>;
  * lines: lines of raw input assembly
  * return: vector of parsed instrutions
  */
-std::vector<Bits<32>> parse_asm(std::vector<std::string> lines);
+std::vector<Bits<32>> parse_asm(const std::vector<std::string>& lines);
 
 /*
  * performs initial step of parsing asm by removing labels and unnessessary whitespace
@@ -38,8 +38,8 @@ std::pair<std::vector<std::string>, std::map<std::string, int>> prepare_asm(
  * labels: hashmap of the label to instruction address pairs
  * return: vector of parsed instrutions
  */
-std::vector<Bits<32>> parse_cleaned_asm(std::vector<std::string> lines, 
-    std::map<std::string, int> labels);
+std::vector<Bits<32>> parse_cleaned_asm(const std::vector<std::string>& lines, 
+    const std::map<std::string, int>& labels);
 
 /*
  * takes in the data of an ASM file and removes unnessessary whitespace, i.e. whitespace at the
@@ -74,7 +74,7 @@ std::vector<std::string> remove_labels(const std::vector<std::string>& lines);
  * line_num: instruction address of the current instruction
  * return: parsed line of asm
  */
-Bits<32> parse_asm_line(std::string line, std::map<std::string, int> labels, int line_num);
+Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int>& labels, int line_num);
 
 /*
  * each instruction of the three below have similar operation, and parse the asm instruction
@@ -85,9 +85,9 @@ Bits<32> parse_asm_line(std::string line, std::map<std::string, int> labels, int
  * instruction_word: word to write binary version of asm to
  * return: whether or not the function successfully parsed the asm
  */
-bool parse_r_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
-bool parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
-bool parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
+bool parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word);
+bool parse_i_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word);
+bool parse_j_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word);
 
 /*
  * returns the integer address of the string representation of a register
@@ -110,7 +110,7 @@ bool is_whitespace(char c);
  * word: instruction word reference to fill in with the instructions opcode
  * return: type of the instruction, i.e. InsType::R, InsType::I
  */
-InsType add_opcode(std::string opcode_str, Bits<32>& word);
+InsType add_opcode(const std::string& opcode_str, Bits<32>& word);
 
 /*
  * takes in a string and splits it into a vector of strings delimited by the value passed in
@@ -118,7 +118,7 @@ InsType add_opcode(std::string opcode_str, Bits<32>& word);
  * delim: character to split in
  * return: split string
  */
-std::vector<std::string> split_string(std::string str, char delim);
+std::vector<std::string> split_string(const std::string& str, char delim);
 
 /*
  * takes in a word and a number to place in the word and write the bits of the number into the word
