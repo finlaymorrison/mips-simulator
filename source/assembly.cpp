@@ -187,6 +187,12 @@ InsType add_opcode(const std::string& opcode_str, Bits<32>& word)
     return ins_type;
 }
 
+void add_alu_funct(Bits<32>& word, const std::string& op_str)
+{
+    int alu_funct = get_alu_funct(op_str);
+    add_bits_to_word(word, alu_funct, 26, 6);
+}
+
 bool is_whitespace(char c)
 {
     return c == ' ' || c == '\t';
@@ -220,10 +226,4 @@ void add_bits_to_word(Bits<32>& word, int num, int start, int len)
         word[i + start] = num % 2;
         num >>= 1;
     }
-}
-
-void add_alu_funct(Bits<32>& word, const std::string& op_str)
-{
-    int alu_funct = get_alu_funct(op_str);
-    add_bits_to_word(word, alu_funct, 26, 6);
 }

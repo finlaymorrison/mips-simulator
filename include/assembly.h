@@ -90,14 +90,6 @@ bool parse_i_type(const std::vector<std::string>& line, int line_num, const std:
 bool parse_j_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word);
 
 /*
- * returns the integer address of the string representation of a register
- * reg_name: name of the register in question, i.e. '$zero', '$a2', '$sp', note that this
- * does not include '$r0', '$r12' etc
- * return: address of register with the name passed in
- */
-int get_reg_address(const std::string& reg_name);
-
-/*
  * returns whether the character passed in is a whitespace character (' ' or '\t')
  * c: character to check for whitespace
  * return: whether the character passed in is whitespace
@@ -111,6 +103,13 @@ bool is_whitespace(char c);
  * return: type of the instruction, i.e. InsType::R, InsType::I
  */
 InsType add_opcode(const std::string& opcode_str, Bits<32>& word);
+
+/*
+ * sets the funct of an r-type instruction from the operation string passed in
+ * word: instruction word to and funct into
+ * op_str: name of the operation for the as instruction
+ */
+void add_alu_funct(Bits<32>& word, const std::string& op_str);
 
 /*
  * takes in a string and splits it into a vector of strings delimited by the value passed in
@@ -128,10 +127,3 @@ std::vector<std::string> split_string(const std::string& str, char delim);
  * len: bit width of number to write into word
  */
 void add_bits_to_word(Bits<32>& word, int num, int start, int len);
-
-/*
- * sets the funct of an r-type instruction from the operation string passed in
- * word: instruction word to and funct into
- * op_str: name of the operation for the as instruction
- */
-void add_alu_funct(Bits<32>& word, const std::string& op_str);

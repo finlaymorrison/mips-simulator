@@ -45,9 +45,15 @@ int get_reg_cnt(const std::string& opcode_str);
 int get_const_cnt(const std::string& opcode_str);
 
 /*
- * takes in an opcode stirng and returns the alu function code of it
+ * takes in an opcode string and returns the alu function code of it
  * opcode_str: source asm opcode to find the aly funct of
  * return: alu funct of the passed in opcode
  */
 int get_alu_funct(const std::string& opcode_str);
 
+/*
+ * takes in the asm name of a register and returns the address of the given register
+ * reg_name: asm name of the register
+ * return: address of the given register name
+ */
+int get_reg_address(const std::string& reg_name)
