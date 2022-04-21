@@ -66,6 +66,11 @@ int main(int argc, char** argv)
         std::cerr << "error: " << e.what() << "\n";
         std::cerr << "usage: " << argv[0] << " {path-to-source-assembly}" << std::endl;
     }
+    catch(const AsmError& e)
+    {
+        std::cerr << "error: " << e.what() << "\n";
+        std::cerr << "refer to the assmebly language specification for more information" << std::endl;
+    }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << std::endl;
