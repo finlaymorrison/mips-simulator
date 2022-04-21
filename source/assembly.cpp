@@ -96,6 +96,8 @@ Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int
 {
     std::vector<std::string> parts = split_string(line, ' ');
 
+    substitute_labels(parts, labels);
+
     Bits<32> word;
 
     InsType ins_type = add_opcode(parts[0], word);
@@ -103,79 +105,124 @@ Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int
     switch (ins_type)
     {
     case InsType::R:
-        success = parse_r_type(parts, word);
+        parse_r_type(parts, word);
         break;
     case InsType::I:
-        success = parse_i_type(parts, line_num, labels, word);
+        parse_i_type(parts, line_num, word);
         break;
     case InsType::J:
-        success = parse_j_type(parts, line_num, labels, word);
+        parse_j_type(parts, line_num, word);
         break;
     case InsType::NONE:
         throw AsmError("invalid opcode string");
     }
 
-    if (!success)
-    {
-        throw AsmError("cannot parse asm string");
-    }
-
     return word;
+}
+
+void substitute_labels(std::vector<std::string>& line,
+    const std::map<std::string, int>& labels)
+{
+    for (std::string& arg : line)
+    {
+        if (labels.find(arg) != labels.end())
+        {
+            arg = std::to_string(labels.at(arg));
+        }
+    }
 }
 
 /*
  * 6:opcode, 5:source_reg_a, 5:source_reg_b, 5:dest_reg, 5:shamt, 6:funct
  */
-bool parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word)
+void parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word)
 {
-    int index = 0;
-    for (int i = 0; i < get_reg_cnt(line[0]); ++i)
+    if (get_reg_cnt(line[0]) == 3)
     {
-
+        int reg_a_address = get_reg_address(line[1]);
+        int reg_b_address = get_reg_address(line[2]);
+        int reg_dest_address = get_reg_address(line[3]);
+        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
+        add_bits_to_word(instruction_word, reg_b_address, 11, 5);
+        add_bits_to_word(instruction_word, reg_dest_address, 16, 5);
+        
     }
-    for (int i = 0; i < get_const_cnt(line[0]); ++i)
+    else if (get_reg_cnt(line[0]) == 2)
     {
-
+        int reg_a_address = get_reg_address(line[1]);
+        int reg_dest_address = get_reg_address(line[2]);
+        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
+        add_bits_to_word(instruction_word, 0, 11, 5);
+        add_bits_to_word(instruction_word, reg_dest_address, 16, 5);
     }
-    add_alu_funct(instruction_word, line[0]);
-    return true;
+    else
+    {
+        throw AsmError("invalid number of registers for an r-type instruction");
+    }
+    if (get_const_cnt(line[0]) == 1)
+    {
+        int shamt = std::stoi(line[2]);
+        add_bits_to_word(instruction_word, shamt, 21, 5);
+    }
+    else if (get_const_cnt(line[0]) == 0)
+    {
+        add_bits_to_word(instruction_word, 0, 21, 5);
+    }
+    else
+    {
+        throw AsmError("invalid number of constants for an r-type instruction");
+    }
+    int alu_funct = get_alu_funct(line[0]);
+    add_bits_to_word(instruction_word, alu_funct, 26, 6);
 }
 
 /*
- * 6:opcode, 5:source_reg, 5:dest_reg, 16:constant/address
+ * 6:opcode, 5:reg_a, 5:reg_b, 16:constant/address
  */
-bool parse_i_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word)
+void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
 {
-    return true;
+    if (get_reg_cnt(line[0]) == 2)
+    {
+        int reg_a_address = get_reg_address(line[1]);
+        int reg_b_address = get_reg_address(line[2]);
+        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
+        add_bits_to_word(instruction_word, reg_b_address, 11, 5);
+        if (get_const_cnt(line[0]) == 1)
+        {
+            // TODO: make relative branch
+            add_bits_to_word(instruction_word, std::stoi(line[3]), 16, 16);
+        }
+        else
+        {
+            throw AsmError("invalid number of constants for an i-type instruction");
+        }
+    }
+    else
+    {
+        throw AsmError("invalid number of registers for an i-type instruction");
+    }
 }
 
 /*
  * 6:opcode, 26:address
  */
-bool parse_j_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word)
+void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
 {
-    return true;
-}
-
-int get_reg_address(const std::string& reg_name)
-{
-    static std::map<std::string, int> reg_addresses = {
-        {"$zero",0}, {"$at",1}, {"$v0",2}, {"$v1",3},
-        {"$a0",4}, {"$a1",5}, {"$a2",6}, {"$a3",7},
-        {"$t0",8}, {"$t1",9}, {"$t2",10}, {"$t3",11},
-        {"$t4",12}, {"$t5",13}, {"$t6",14}, {"$t7",15},
-        {"$s0",16}, {"$s1",17}, {"$s2",18}, {"$s3",19},
-        {"$s4",20}, {"$s5",21}, {"$s6",22}, {"$s7",23},
-        {"$t8",24}, {"$t9",25}, {"$k0",26}, {"$k1",27},
-        {"$gp",28}, {"$sp",29}, {"$fp",30}, {"$ra",31},
-    };
-    if (reg_addresses.find(reg_name) != reg_addresses.end())
+    if (get_reg_cnt(line[0]) == 0)
     {
-        return reg_addresses[reg_name];
+        if (get_const_cnt(line[0]) == 1)
+        {
+            // TODO: use the strange stuff with the top 4 bits of pc and multiply by 4
+            add_bits_to_word(instruction_word, std::stoi(line[1]), 6, 28);
+        }
+        else
+        {
+            throw AsmError("invalid number of constants for a j-type instruction");
+        }
     }
     else
     {
-        throw AsmError("invalid register name");
+        throw AsmError("invalid number of registers for a j-type instruction");
     }
 }
 
@@ -185,12 +232,6 @@ InsType add_opcode(const std::string& opcode_str, Bits<32>& word)
     InsType ins_type = get_ins_type(opcode_str);
     add_bits_to_word(word, opcode, 0, 6);
     return ins_type;
-}
-
-void add_alu_funct(Bits<32>& word, const std::string& op_str)
-{
-    int alu_funct = get_alu_funct(op_str);
-    add_bits_to_word(word, alu_funct, 26, 6);
 }
 
 bool is_whitespace(char c)

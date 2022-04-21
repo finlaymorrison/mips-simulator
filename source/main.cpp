@@ -28,6 +28,24 @@ std::vector<std::string> read_file(std::string filepath)
     return lines;
 }
 
+/*
+ * writes an assembled binary file to a filename with the path given
+ * binary: assembled binary data
+ * filepath: path to save binary data
+ */
+void write_binary(std::vector<Bits<32>> binary, std::string filepath)
+{
+    std::ofstream binary_file(filepath);
+    for (const Bits<32>& instruction : binary)
+    {
+        for (bool b : instruction)
+        {
+            binary_file << b;
+        }
+        binary_file << std::endl;
+    }
+}
+
 /* 
  * checks that arguments passed in on command line are valid
  * argc: number of arguments
@@ -60,6 +78,8 @@ int main(int argc, char** argv)
         std::string source_file = validate_args(argc, argv);
         std::vector<std::string> source_lines = read_file(source_file);
         std::vector<Bits<32>> instructions = parse_asm(source_lines);
+        write_binary(instructions, "test.bin");
+
     }
     catch(const ArgError& e)
     {

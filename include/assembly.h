@@ -77,6 +77,15 @@ std::vector<std::string> remove_labels(const std::vector<std::string>& lines);
 Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int>& labels, int line_num);
 
 /*
+ * takes in a line of asm with its operands split apart and substitutes instances of the labels in
+ * line: asm line with no labels substituted
+ * labels: hashmap of labels and their instruction addresses
+ * return: asm line with labels substituded
+ */
+void substitute_labels(std::vector<std::string>& line,
+    const std::map<std::string, int>& labels);
+
+/*
  * each instruction of the three below have similar operation, and parse the asm instruction
  * passed in and put the machine code in the instruction word passed in, however each
  * instruction does this process for a specific type of instruction
@@ -85,9 +94,9 @@ Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int
  * instruction_word: word to write binary version of asm to
  * return: whether or not the function successfully parsed the asm
  */
-bool parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word);
-bool parse_i_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word);
-bool parse_j_type(const std::vector<std::string>& line, int line_num, const std::map<std::string, int>& labels, Bits<32>& instruction_word);
+void parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word);
+void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
+void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
 
 /*
  * returns whether the character passed in is a whitespace character (' ' or '\t')
@@ -103,13 +112,6 @@ bool is_whitespace(char c);
  * return: type of the instruction, i.e. InsType::R, InsType::I
  */
 InsType add_opcode(const std::string& opcode_str, Bits<32>& word);
-
-/*
- * sets the funct of an r-type instruction from the operation string passed in
- * word: instruction word to and funct into
- * op_str: name of the operation for the as instruction
- */
-void add_alu_funct(Bits<32>& word, const std::string& op_str);
 
 /*
  * takes in a string and splits it into a vector of strings delimited by the value passed in
