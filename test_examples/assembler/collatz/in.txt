@@ -1,0 +1,75 @@
+    addi $sp $zero 100
+    addi $a0 $zero 200
+    br collatz-largest
+
+/ procedure collatz-largest($a0 : largest num)
+collatz-largest:
+    subi $sp $sp 20
+    sw $s0 0($sp)
+    sw $s1 4($sp)
+    sw $s2 8($sp)
+    sw $s3 12($sp)
+    sw $ra 16($sp)
+
+    add $s0 $a0 $zero / max value
+    addi $s1 $zero 1 / current value
+    add $s2 $zero $zero / largest value
+    add $s3 $zero $zero / largest index
+
+collatz-largest-loop:
+    beq $s1 $s0 collatz-largest-loop
+    addi $s1 $s1 1
+    add $a0 $s1 $zero
+    br collatz
+    sgt $t0 $v0 $s2
+    beq $t0 $zero collatz-largest-loop
+    add $s2 $v0 $zero
+    add $s3 $s1 $zero
+    j collatz-largest-loop
+
+exit-collatz-largest:
+    add $v0 $s2 $zero
+    add $v1 $s3 $zero
+    lw $s0 0($sp)
+    lw $s1 4($sp)
+    lw $s2 8($sp)
+    lw $s3 12($sp)
+    lw $ra 16($sp)
+    addi $sp $sp 20
+
+/ procedure collatz($a0 : num)
+collatz:
+    subi $sp $sp 12
+    sw $s0 0($sp)
+    sw $s1 4($sp)
+    sw $ra 8($sp)
+    add $s0 $a0 $zero
+    add $s1 $zero $zero
+collatz-loop:
+    addi $t0 $zero 1
+    beq $s0 $t0 collatz-exit
+    add $a0 $s0 $zero
+    br collatz_step
+    add $s0 $v0 $zero
+    addi $s1 1
+    j collatz-loop
+collatz-exit:
+    add $v0 $s1 $zero
+    lw $s0 0($sp)
+    lw $s1 4($sp)
+    lw $ra 8($sp)
+    addi $sp $sp 12
+    jr $ra
+
+/ procedure collatz_step($a0 : num)
+collatz_step:
+    add $v0 $a0 $a0
+    andi $t1 $a0 1
+    beq $t1 $zero even
+    add $v0 $v0 $a0
+    addi $v0 $v0 1
+    j exit
+even:
+    sll $v0 $v0 2
+exit:
+    jr $ra

@@ -1,0 +1,14 @@
+    add $a0 $zero 100 / $a0 = max number
+    add $s1 $zero $zero / $s1 = outer loop counter
+outer-loop:   
+    add $v0 $zero $zero / $v0 = number working out
+    add $t1 $zero $zero / $t1 = inner loop counter
+inner-loop:
+    add $v0 $v0 $s1
+    addi $t1 1
+    bne $t1 $s1 inner-loop
+    sll $t0 $s1 2 / $t0 = outer loop counter * 4
+    sw $v0 0($t0)
+    addi $s1 $s1 1
+    bne $s1 $a0 outer-loop
+    exit

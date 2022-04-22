@@ -1,0 +1,43 @@
+/ setup stack at memory address 1000 and call function
+    addi $sp $zero 1000
+    addi $a0 $zero 100
+    br square-list
+    exit
+
+/ procedure square-list($a0 : max number, $a1 : output base)
+/ $s0 : $a0
+/ $s1 : loop counter
+/ $t0 : memory address
+square-list:
+    subi $sp $sp 12
+    sw $s0 0($sp)
+    sw $s1 4($sp)
+    sw $ra 8($sp)
+    add $s0 $a0 $zero
+    add $s1 $a1 $zero
+    add $s1 $zero $zero
+outer-loop:
+    add $a0 $s1 $zero
+    br square
+    sll $t0 $s1 2
+    add $t0 $t0 $a1
+    sw $v0 0($t0)
+    addi $s1 $s1 1
+    bne $s1 $s0 outer-loop
+    lw $s0 0($sp)
+    lw $s1 4($sp)
+    lw $ra 8($sp)
+    addi $sp $sp 12
+    jr $ra
+
+/ procedure square($a0 : number)
+/ $t0 : loop counter
+/ $v0 : current square value
+square:
+    add $t0 $zero $zero
+    add $v0 $zero $zero
+inner-loop:
+    add $v0 $v0 $a0
+    addi $t0 1
+    bne $t0 $a0 inner-loop
+    jr $ra
