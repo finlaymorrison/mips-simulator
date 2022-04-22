@@ -99,6 +99,14 @@ void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
 void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word);
 
 /*
+ * takes in a raw offset register operand, i.e `16($s3)` and returns
+ * the offset integer and register address.
+ * raw_offset: the raw offset register operand
+ * return: pair of the offset and the offset register address
+ */
+std::pair<int, int> extract_offset(const std::string& raw_offset);
+
+/*
  * returns whether the character passed in is a whitespace character (' ' or '\t')
  * c: character to check for whitespace
  * return: whether the character passed in is whitespace

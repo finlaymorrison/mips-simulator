@@ -133,27 +133,37 @@ void substitute_labels(std::vector<std::string>& line,
 }
 
 /*
- * 6:opcode, 5:source_reg_a, 5:source_reg_b, 5:dest_reg, 5:shamt, 6:funct
+ * 6:opcode, 5:dest_reg, 5:source_reg_a, 5:source_reg_b, 5:shamt, 6:funct
  */
 void parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_word)
 {
+    if (line.size() != get_reg_cnt(line[0]) + get_const_cnt(line[0]) + 1)
+    {
+        throw AsmError("invalid number of registers for an r-type instruction");
+    }
     if (get_reg_cnt(line[0]) == 3)
     {
-        int reg_a_address = get_reg_address(line[1]);
-        int reg_b_address = get_reg_address(line[2]);
-        int reg_dest_address = get_reg_address(line[3]);
-        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
-        add_bits_to_word(instruction_word, reg_b_address, 11, 5);
-        add_bits_to_word(instruction_word, reg_dest_address, 16, 5);
+        int reg_dest_address = get_reg_address(line[1]);
+        int reg_a_address = get_reg_address(line[2]);
+        int reg_b_address = get_reg_address(line[3]);
+        add_bits_to_word(instruction_word, reg_dest_address, 6, 5);
+        add_bits_to_word(instruction_word, reg_a_address, 11, 5);
+        add_bits_to_word(instruction_word, reg_b_address, 16, 5);
         
     }
     else if (get_reg_cnt(line[0]) == 2)
     {
-        int reg_a_address = get_reg_address(line[1]);
-        int reg_dest_address = get_reg_address(line[2]);
-        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
-        add_bits_to_word(instruction_word, 0, 11, 5);
-        add_bits_to_word(instruction_word, reg_dest_address, 16, 5);
+        int reg_dest_address = get_reg_address(line[1]);
+        int reg_a_address = get_reg_address(line[2]);
+        add_bits_to_word(instruction_word, reg_dest_address, 6, 5);
+        add_bits_to_word(instruction_word, reg_a_address, 11, 5);
+        add_bits_to_word(instruction_word, 0, 16, 5);
+    }
+    else if (get_reg_cnt(line[0]) == 1)
+    {
+        int reg_address = get_reg_address(line[1]);
+        add_bits_to_word(instruction_word, reg_address, 6, 5);
+        add_bits_to_word(instruction_word, 0, 11, 21);
     }
     else
     {
@@ -161,7 +171,7 @@ void parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_wo
     }
     if (get_const_cnt(line[0]) == 1)
     {
-        int shamt = std::stoi(line[2]);
+        int shamt = std::stoi(line[3]);
         add_bits_to_word(instruction_word, shamt, 21, 5);
     }
     else if (get_const_cnt(line[0]) == 0)
@@ -181,6 +191,10 @@ void parse_r_type(const std::vector<std::string>& line, Bits<32>& instruction_wo
  */
 void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
 {
+    if (line.size() != get_reg_cnt(line[0]) + get_const_cnt(line[0]) + get_offset_cnt(line[0]) + 1)
+    {
+        throw AsmError("invalid number of registers for an i-type instruction");
+    }
     if (get_reg_cnt(line[0]) == 2)
     {
         int reg_a_address = get_reg_address(line[1]);
@@ -197,6 +211,14 @@ void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
             throw AsmError("invalid number of constants for an i-type instruction");
         }
     }
+    else if (get_reg_cnt(line[0]) == 1 && get_offset_cnt(line[0]) == 1)
+    {
+        int reg_a_address = get_reg_address(line[1]);
+        add_bits_to_word(instruction_word, reg_a_address, 6, 5);
+        std::pair<int, int> offset_reg = extract_offset(line[2]);
+        add_bits_to_word(instruction_word, offset_reg.second, 11, 5);
+        add_bits_to_word(instruction_word, offset_reg.first, 16, 16);
+    }
     else
     {
         throw AsmError("invalid number of registers for an i-type instruction");
@@ -208,6 +230,10 @@ void parse_i_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
  */
 void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& instruction_word)
 {
+    if (line.size() != get_reg_cnt(line[0]) + get_const_cnt(line[0]) + 1)
+    {
+        throw AsmError("invalid number of registers for an j-type instruction");
+    }
     if (get_reg_cnt(line[0]) == 0)
     {
         if (get_const_cnt(line[0]) == 1)
@@ -226,6 +252,13 @@ void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
     }
 }
 
+std::pair<int, int> extract_offset(const std::string& raw_offset)
+{
+    std::vector<std::string> split = split_string(raw_offset, '(');
+    int offset = std::stoi(split[0]);
+    return {std::stoi(split[0]), get_reg_address(split[1].substr(0,split[1].size() - 1))};
+}
+
 InsType add_opcode(const std::string& opcode_str, Bits<32>& word)
 {
     int opcode = get_opcode(opcode_str);
@@ -233,6 +266,7 @@ InsType add_opcode(const std::string& opcode_str, Bits<32>& word)
     add_bits_to_word(word, opcode, 0, 6);
     return ins_type;
 }
+
 
 bool is_whitespace(char c)
 {

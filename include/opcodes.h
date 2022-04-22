@@ -4,6 +4,7 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 
 /*
  * the type of a given instruction, InsType::NONE for an error
@@ -43,6 +44,13 @@ int get_reg_cnt(const std::string& opcode_str);
  * return: number of constant operands the passed in asm opcode takes
  */
 int get_const_cnt(const std::string& opcode_str);
+
+/*
+ * takes in an opcode string and returns the number of constant offset register operands it takes
+ * opcode_str: source asm opcode to find the number of constant offset operands
+ * return: number of constant operands for the passed in asm opcode
+ */
+int get_offset_cnt(const std::string& opcode_str);
 
 /*
  * takes in an opcode string and returns the alu function code of it

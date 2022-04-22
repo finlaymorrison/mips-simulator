@@ -52,9 +52,9 @@ void write_binary(std::vector<Bits<32>> binary, std::string filepath)
  * argv: array of argument strings
  * return: path to assembly file
  */
-std::string validate_args(int argc, char** argv)
+std::pair<std::string, std::string> validate_args(int argc, char** argv)
 {
-    if (argc != 2)
+    if (argc != 3)
     {
         throw ArgError("incorrect number of command line arguments");
     }
@@ -62,7 +62,7 @@ std::string validate_args(int argc, char** argv)
     {
         throw ArgError("file does not exist");
     }
-    return argv[1];
+    return {argv[1], argv[2]};
 }
 
 /* 
@@ -75,24 +75,28 @@ int main(int argc, char** argv)
 {
     try
     {
-        std::string source_file = validate_args(argc, argv);
-        std::vector<std::string> source_lines = read_file(source_file);
+        std::pair<std::string, std::string> files = validate_args(argc, argv);
+        std::vector<std::string> source_lines = read_file(files.first);
         std::vector<Bits<32>> instructions = parse_asm(source_lines);
-        write_binary(instructions, "test.bin");
+        write_binary(instructions, files.second);
 
     }
     catch(const ArgError& e)
     {
         std::cerr << "error: " << e.what() << "\n";
-        std::cerr << "usage: " << argv[0] << " {path-to-source-assembly}" << std::endl;
+        std::cerr << "usage: " << argv[0] << " {path-to-source-assembly} {path-to-output-binary}" << std::endl;
+        return 3;
     }
     catch(const AsmError& e)
     {
         std::cerr << "error: " << e.what() << "\n";
         std::cerr << "refer to the assmebly language specification for more information" << std::endl;
+        return 2;
     }
     catch(const std::exception& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "error: " << e.what() << std::endl;
+        return 1;
     }
+    return 0;
 }
