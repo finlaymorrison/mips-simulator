@@ -1,7 +1,7 @@
 / setup stack at memory address 1000 and call function
     addi $sp $zero 1000
     addi $a0 $zero 100
-    br square-list
+    jal square-list
     exit
 
 / procedure square-list($a0 : max number, $a1 : output base)
@@ -18,7 +18,7 @@ square-list:
     add $s1 $zero $zero
 outer-loop:
     add $a0 $s1 $zero
-    br square
+    jal square
     sll $t0 $s1 2
     add $t0 $t0 $a1
     sw $v0 0($t0)

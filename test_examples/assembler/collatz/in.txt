@@ -1,6 +1,6 @@
     addi $sp $zero 100
     addi $a0 $zero 200
-    br collatz-largest
+    jal collatz-largest
 
 / procedure collatz-largest($a0 : largest num)
 collatz-largest:
@@ -20,7 +20,7 @@ collatz-largest-loop:
     beq $s1 $s0 collatz-largest-loop
     addi $s1 $s1 1
     add $a0 $s1 $zero
-    br collatz
+    jal collatz
     sgt $t0 $v0 $s2
     beq $t0 $zero collatz-largest-loop
     add $s2 $v0 $zero
@@ -49,7 +49,7 @@ collatz-loop:
     addi $t0 $zero 1
     beq $s0 $t0 collatz-exit
     add $a0 $s0 $zero
-    br collatz_step
+    jal collatz_step
     add $s0 $v0 $zero
     addi $s1 1
     j collatz-loop
