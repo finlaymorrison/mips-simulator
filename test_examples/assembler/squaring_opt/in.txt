@@ -1,5 +1,6 @@
     add $a0 $zero 100 / $a0 = max number
-    add $s1 $zero $zero / $s1 = outer loop counter
+    addi $s1 $zero 1 / $s1 = outer loop counter
+    sw $zero 0($zero) / code does not work for squaring 0, so using special case
 outer-loop:   
     add $v0 $zero $zero / $v0 = number working out
     add $t1 $zero $zero / $t1 = inner loop counter

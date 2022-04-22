@@ -14,8 +14,8 @@ square-list:
     sw $s1 4($sp)
     sw $ra 8($sp)
     add $s0 $a0 $zero
-    add $s1 $a1 $zero
-    add $s1 $zero $zero
+    addi $s1 $zero 1
+    sw $zero 0($a1) / code does not work for squaring 0, so using special case
 outer-loop:
     add $a0 $s1 $zero
     jal square
