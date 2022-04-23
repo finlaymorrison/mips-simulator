@@ -18,11 +18,11 @@ def test_example(test_path):
     if input and output:
         os.system("./bin/{} {} tmp/out.txt".format(program_name, input))
         if filecmp.cmp("tmp/out.txt", output):
-            print("success: {}".format(test_name))
+            print("\tsuccess: {}".format(test_name))
         else:
             os.system("mkdir -p tmp/{}".format(program_name))
             os.system("mv tmp/out.txt tmp/{}/{}.out".format(program_name, test_name))
-            print("fail: {} : output saved at tmp/{}/{}.out".format(test_name, program_name, test_name))
+            print("\tfail: {} : output saved at tmp/{}/{}.out".format(test_name, program_name, test_name))
 
 def test_program(tests_path):
     print("testing {}".format(tests_path.split('/')[1]))

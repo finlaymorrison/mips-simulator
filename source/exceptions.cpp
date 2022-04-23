@@ -17,3 +17,12 @@ const char* AsmError::what() const throw()
 {
     return msg;
 }
+
+TestError::TestError(const char* msg) noexcept :
+    msg(msg)
+{}
+
+const char* TestError::what() const throw()
+{
+    return msg;
+}

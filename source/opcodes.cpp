@@ -7,7 +7,8 @@ int get_opcode(const std::string& opcode_str)
         {"nor", 0}, {"nand", 0}, {"srl", 0}, {"sll", 0},
         {"addi", 1}, {"andi", 2}, {"ori", 3}, {"bne", 4},
         {"beq", 5}, {"j", 6}, {"lw", 7}, {"sw", 8},
-        {"subi", 9}, {"jr", 0}
+        {"subi", 9}, {"jr", 0}, {"jal", 10}, {"exit",11},
+        {"sgt", 0}, {"slt", 0}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {
@@ -30,7 +31,9 @@ InsType get_ins_type(const std::string& opcode_str)
         {"ori", InsType::I}, {"bne", InsType::I},
         {"lw", InsType::I}, {"sw", InsType::I},
         {"beq", InsType::I}, {"j", InsType::J},
-        {"subi", InsType::I}, {"jr", InsType::R}
+        {"subi", InsType::I}, {"jr", InsType::R},
+        {"jal", InsType::J}, {"exit", InsType::J},
+        {"sgt", InsType::R}, {"slt", InsType::R}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {
@@ -49,7 +52,8 @@ int get_reg_cnt(const std::string& opcode_str)
         {"nor", 3}, {"nand", 3}, {"srl", 2}, {"sll", 2},
         {"addi", 2}, {"andi", 2}, {"ori", 2}, {"bne", 2},
         {"beq", 2}, {"j", 0}, {"lw", 1}, {"sw", 1},
-        {"subi", 2}, {"jr", 1}
+        {"subi", 2}, {"jr", 1}, {"jal", 0}, {"exit", 0},
+        {"sgt", 3}, {"slt", 3}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {
@@ -68,7 +72,8 @@ int get_const_cnt(const std::string& opcode_str)
         {"nor", 0}, {"nand", 0}, {"srl", 1}, {"sll", 1},
         {"addi", 1}, {"andi", 1}, {"ori", 1}, {"bne", 1},
         {"beq", 1}, {"j", 1}, {"lw", 0}, {"sw", 0},
-        {"subi", 1}, {"jr", 0}
+        {"subi", 1}, {"jr", 0}, {"jal", 1}, {"exit", 0},
+        {"sgt", 0}, {"slt", 0}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {
@@ -87,7 +92,8 @@ int get_offset_cnt(const std::string& opcode_str)
         {"nor", 0}, {"nand", 0}, {"srl", 0}, {"sll", 0},
         {"addi", 0}, {"andi", 0}, {"ori", 0}, {"bne", 0},
         {"beq", 0}, {"j", 0}, {"lw", 1}, {"sw", 1},
-        {"subi", 0}, {"jr", 0}
+        {"subi", 0}, {"jr", 0}, {"jal", 0}, {"exit", 0},
+        {"sgt", 0}, {"slt", 0}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {
@@ -104,7 +110,7 @@ int get_alu_funct(const std::string& opcode_str)
     static std::map<std::string, int> opcodes = {
         {"add",0}, {"sub",1}, {"and",2}, {"or", 3},
         {"nor", 4}, {"nand", 5}, {"srl", 6}, {"sll", 7},
-        {"jr", 8}
+        {"jr", 8}, {"sgt", 9}, {"slt", 10}
     };
     if (opcodes.find(opcode_str) != opcodes.end())
     {

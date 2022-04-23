@@ -19,3 +19,12 @@ public:
     AsmError(const char *msg) noexcept;
     const char* what() const throw() override;
 };
+
+class TestError : public std::exception
+{
+private:
+    const char* msg;
+public:
+    TestError(const char *msg) noexcept;
+    const char* what() const throw() override;
+};

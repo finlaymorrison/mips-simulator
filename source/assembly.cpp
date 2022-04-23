@@ -9,7 +9,8 @@ std::vector<Bits<32>> parse_asm(const std::vector<std::string>& lines)
 std::pair<std::vector<std::string>, std::map<std::string, int>> prepare_asm(
     const std::vector<std::string>& raw_asm)
 {
-    std::vector<std::string> rem_ws = remove_whitespace(raw_asm);
+    std::vector<std::string> cmt_rem = remove_comments(raw_asm);
+    std::vector<std::string> rem_ws = remove_whitespace(cmt_rem);
     std::map<std::string, int> labels = extract_labels(rem_ws);
     std::vector<std::string> cleaned_raw = remove_labels(rem_ws);
     return std::make_pair(cleaned_raw, labels);
@@ -26,6 +27,23 @@ std::vector<Bits<32>> parse_cleaned_asm(const std::vector<std::string>& lines,
         ++line_num;
     }
     return parsed;
+}
+
+std::vector<std::string> remove_comments(const std::vector<std::string>& lines)
+{
+    std::vector<std::string> no_comments;
+    for (const std::string& line : lines)
+    {
+        if (line.find('/') == std::string::npos)
+        {
+            no_comments.push_back(line);
+        }
+        else
+        {
+            no_comments.push_back(line.substr(0, line.find('/')));
+        }
+    }
+    return no_comments;
 }
 
 std::vector<std::string> remove_whitespace(const std::vector<std::string>& lines)
@@ -55,7 +73,10 @@ std::vector<std::string> remove_whitespace(const std::vector<std::string>& lines
         {
             cleaned_line.pop_back();
         }
-        cleaned_code.push_back(cleaned_line);
+        if (cleaned_line.size())
+        {
+            cleaned_code.push_back(cleaned_line);
+        }
     }
     return cleaned_code;
 }
@@ -240,6 +261,10 @@ void parse_j_type(const std::vector<std::string>& line, int line_num, Bits<32>& 
         {
             // TODO: use the strange stuff with the top 4 bits of pc and multiply by 4
             add_bits_to_word(instruction_word, std::stoi(line[1]), 6, 28);
+        }
+        else if (get_const_cnt(line[0]) == 0)
+        {
+            add_bits_to_word(instruction_word, 0, 6, 28);
         }
         else
         {

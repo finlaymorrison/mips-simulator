@@ -17,7 +17,7 @@ collatz-largest:
     add $s3 $zero $zero / largest index
 
 collatz-largest-loop:
-    beq $s1 $s0 collatz-largest-loop
+    beq $s1 $s0 exit-collatz-largest
     addi $s1 $s1 1
     add $a0 $s1 $zero
     jal collatz
@@ -51,7 +51,7 @@ collatz-loop:
     add $a0 $s0 $zero
     jal collatz_step
     add $s0 $v0 $zero
-    addi $s1 1
+    addi $s1 $s1 1
     j collatz-loop
 collatz-exit:
     add $v0 $s1 $zero

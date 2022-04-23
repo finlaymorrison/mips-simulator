@@ -1,4 +1,4 @@
-    add $a0 $zero 100 / $a0 = max number
+    addi $a0 $zero 100 / $a0 = max number
     addi $s1 $zero 1 / $s1 = outer loop counter
     sw $zero 0($zero) / code does not work for squaring 0, so using special case
 outer-loop:   
@@ -6,7 +6,7 @@ outer-loop:
     add $t1 $zero $zero / $t1 = inner loop counter
 inner-loop:
     add $v0 $v0 $s1
-    addi $t1 1
+    addi $t1 $t1 1
     bne $t1 $s1 inner-loop
     sll $t0 $s1 2 / $t0 = outer loop counter * 4
     sw $v0 0($t0)

@@ -42,6 +42,14 @@ std::vector<Bits<32>> parse_cleaned_asm(const std::vector<std::string>& lines,
     const std::map<std::string, int>& labels);
 
 /*
+ * takes in an asm file with comments added with the '/' character, and removes
+ * everything on a line after a '/'
+ * lines: raw asm file
+ * return: asm file with comments removed
+ */
+std::vector<std::string> remove_comments(const std::vector<std::string>& lines);
+
+/*
  * takes in the data of an ASM file and removes unnessessary whitespace, i.e. whitespace at the
  * ends of any line and more than one whitespace inbetween other characters, note that ',' is
  * also being treated as a whitespace by this function
