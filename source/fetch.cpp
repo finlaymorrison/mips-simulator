@@ -35,6 +35,7 @@ IFID Fetch::run(EXMEM exmem_reg)
     IFID reg;
 
     reg.instruction = fetch_instruction();
+    reg.instruction_addr = PC;
 
     return reg;
 }

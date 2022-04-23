@@ -71,10 +71,17 @@ IDEX Decode::run(IFID ifid_reg, MEMWB memwb_reg)
     idex_reg.reg_dest_add = reg_dest_add;
     idex_reg.shamt = shamt;
     idex_reg.addr = addr;
+    idex_reg.instruction_addr = ifid_reg.instruction_addr;
 
     /* for sw instruction */
     size_t reg_dest_add_num = get_reg_add(ifid_reg.instruction, 6);
     idex_reg.reg_dest_data = registers[reg_dest_add_num];
 
     return idex_reg;
+}
+
+void Decode::set_register(const Bits<5>& addr, const Bits<32>& data)
+{
+    int addr_int = bin_to_int<5>(addr);
+    registers[addr_int] = data;
 }

@@ -68,6 +68,9 @@ EXMEM Execute::run(IDEX idex_reg)
     ret.reg_dest_add = idex_reg.reg_dest_add;
     ret.addr = sign_extend<26,32>(idex_reg.addr);
     ret.br_addr = idex_reg.const_data;
+    ret.aluop = idex_reg.aluop;
+    ret.instruction_addr = idex_reg.instruction_addr;
+    ret.reg_dest_data = idex_reg.reg_dest_data;
 
     Bits<32> tmp;
     switch (opcode_num)
@@ -127,4 +130,6 @@ EXMEM Execute::run(IDEX idex_reg)
         break;
     }
     ret.zero = is_zero<32>(ret.alures);
+
+    return ret;
 }

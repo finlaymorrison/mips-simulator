@@ -16,8 +16,8 @@ void MIPS::clock_cycle()
     IFID ifid_n = fetch.run(exmem_reg);
     IDEX idex_n = decode.run(ifid_reg, memwb_reg);
     EXMEM exmem_n = execute.run(idex_reg);
-    MEMWB memwb_n = mem_read.run(exmem_reg);
-    writeback.run(memwb_n);
+    MEMWB memwb_n = mem_read.run(exmem_reg, fetch);
+    writeback.run(memwb_n, decode);
 
 
     ifid_reg = ifid_n;

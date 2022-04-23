@@ -8,6 +8,8 @@
 struct IFID
 {
     Bits<32> instruction;
+
+    Bits<32> instruction_addr;
 };
 
 struct IDEX
@@ -21,6 +23,8 @@ struct IDEX
     Bits<32> reg_a_data;
     Bits<32> reg_b_data;
     Bits<32> const_data;
+
+    Bits<32> instruction_addr;
 
     /* for sw instruction */
     Bits<32> reg_dest_data;
@@ -36,9 +40,17 @@ struct EXMEM
     bool zero;
     Bits<32> alures;
     Bits<32> addr;
+    Bits<6> aluop;
+
+    Bits<32> instruction_addr;
+
+    /* for sw instruction */
+    Bits<32> reg_dest_data;
 };
 
 struct MEMWB
 {
-
+    Bits<32> write_data;
+    Bits<5> reg_dest_add;
+    Bits<6> opcode;
 };

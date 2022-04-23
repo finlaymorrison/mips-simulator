@@ -2,6 +2,8 @@
 
 #include "interstage_regs.h"
 #include "mmemory.h"
+#include "binary_ops.h"
+#include "fetch.h"
 
 class MemRead
 {
@@ -10,5 +12,5 @@ private:
 public:
     MemRead(size_t data_capacity);
 
-    MEMWB run(EXMEM exmem_reg);
+    MEMWB run(EXMEM exmem_reg, Fetch& fetch);
 };
