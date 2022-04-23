@@ -16,6 +16,7 @@
 class MIPS
 {
 private:
+    int t_counter;
     Fetch fetch;
     Decode decode;
     Execute execute;
@@ -30,4 +31,5 @@ public:
     MIPS(size_t instruction_capacity, size_t data_capacity);
     void initialize_instruction_mem(const std::vector<Bits<32>>& instructions);
     void clock_cycle();
+    void run();
 };
