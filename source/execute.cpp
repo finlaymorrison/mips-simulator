@@ -1,6 +1,6 @@
 #include "execute.h"
 
-Bits<32> Execute::rtype(Bits<6> aluop, Bits<32> reg_a_data, Bits<32> reg_b_data, Bits<5> shamt)
+Bits<32> Execute::rtype(Bits<6> aluop, Bits<32> reg_dest_data, Bits<32> reg_a_data, Bits<32> reg_b_data, Bits<5> shamt)
 {
     int aluop_num = bin_to_int<6>(aluop);
     Bits<32> res;
@@ -45,7 +45,7 @@ Bits<32> Execute::rtype(Bits<6> aluop, Bits<32> reg_a_data, Bits<32> reg_b_data,
         break;
     case 8:
         /* jump register */
-        res = reg_a_data;
+        res = reg_dest_data;
         break;
     case 9:
         /* set greater than */
@@ -56,6 +56,7 @@ Bits<32> Execute::rtype(Bits<6> aluop, Bits<32> reg_a_data, Bits<32> reg_b_data,
         res = slt<32>(reg_a_data, reg_b_data);
         break;
     }
+
     return res;
 }
 
@@ -77,7 +78,7 @@ EXMEM Execute::run(IDEX idex_reg)
     {
     case 0:
         /* r-type instruction */
-        ret.alures = rtype(idex_reg.aluop, idex_reg.reg_a_data, idex_reg.reg_b_data, idex_reg.shamt);
+        ret.alures = rtype(idex_reg.aluop, idex_reg.reg_dest_data, idex_reg.reg_a_data, idex_reg.reg_b_data, idex_reg.shamt);
         break;
     case 1:
         /* addi */
@@ -93,13 +94,13 @@ EXMEM Execute::run(IDEX idex_reg)
         break;
     case 4:
         /* bne */
-        tmp = bitwise_not<32>(idex_reg.reg_b_data);
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, tmp, true);
+        tmp = bitwise_not<32>(idex_reg.reg_a_data);
+        ret.alures = add_bin_nums<32>(idex_reg.reg_dest_data, tmp, true);
         break;
     case 5:
         /* beq */
-        tmp = bitwise_not<32>(idex_reg.reg_b_data);
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, tmp, true);
+        tmp = bitwise_not<32>(idex_reg.reg_a_data);
+        ret.alures = add_bin_nums<32>(idex_reg.reg_dest_data, tmp, true);
         break;
     case 6:
         /* j */
@@ -130,6 +131,8 @@ EXMEM Execute::run(IDEX idex_reg)
         break;
     }
     ret.zero = is_zero<32>(ret.alures);
+
+    std::cout << "\tres = " << bin_to_int<32>(ret.alures) << std::endl;
 
     return ret;
 }

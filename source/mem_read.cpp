@@ -12,6 +12,8 @@ MEMWB MemRead::run(EXMEM exmem_reg, Fetch& fetch)
     MEMWB ret;
     ret.opcode = exmem_reg.opcode;
 
+    ret.reg_dest_add = {false, false, false ,false, false};
+
     switch(opcode_num)
     {
     case 0:
@@ -20,6 +22,20 @@ MEMWB MemRead::run(EXMEM exmem_reg, Fetch& fetch)
             /* jr */
             fetch.set_pc(exmem_reg.alures);
         }
+        else
+        {
+            ret.write_data = exmem_reg.alures;
+            ret.reg_dest_add = exmem_reg.reg_dest_add;
+        }
+        
+        break;
+    case 1:
+    case 2:
+    case 3:
+    case 9:
+        /* addi, andi, ori, subi */
+        ret.write_data = exmem_reg.alures;
+        ret.reg_dest_add = exmem_reg.reg_dest_add;
         break;
     case 4:
         /* bne */
@@ -42,6 +58,7 @@ MEMWB MemRead::run(EXMEM exmem_reg, Fetch& fetch)
     case 7:
         /* lw */
         ret.write_data = data_memory.read_word(exmem_reg.alures);
+        ret.reg_dest_add = exmem_reg.reg_dest_add;
         break;
     case 8:
         /* sw */
@@ -58,4 +75,9 @@ MEMWB MemRead::run(EXMEM exmem_reg, Fetch& fetch)
     }
 
     return ret;
+}
+
+std::vector<std::string> MemRead::memory_dump() const
+{
+    return data_memory.memory_dump();
 }

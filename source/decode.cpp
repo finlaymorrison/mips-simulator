@@ -1,5 +1,16 @@
 #include "decode.h"
 
+Decode::Decode()
+{
+    for (Bits<32>& bits : registers)
+    {
+        for (bool& b : bits)
+        {
+            b = false;
+        }
+    }
+}
+
 size_t Decode::get_reg_add(const Bits<32>& instruction, int offset)
 {
     int add = 0;
@@ -75,7 +86,13 @@ IDEX Decode::run(IFID ifid_reg, MEMWB memwb_reg)
 
     /* for sw instruction */
     size_t reg_dest_add_num = get_reg_add(ifid_reg.instruction, 6);
-    idex_reg.reg_dest_data = registers[reg_dest_add_num];
+    idex_reg.reg_dest_data = reg_dest_add_num ? registers[reg_dest_add_num] : Bits<32>();
+
+    std::cout << '\t' << get_reg_name(reg_dest_add_num) << " = " << bin_to_int<32>(idex_reg.reg_dest_data) << std::endl;
+    std::cout << '\t' << get_reg_name(reg_a_add) << " = " << bin_to_int<32>(idex_reg.reg_a_data) << std::endl;
+    std::cout << '\t' << get_reg_name(reg_b_add) << " = " << bin_to_int<32>(idex_reg.reg_b_data) << std::endl;
+
+    print_registers();
 
     return idex_reg;
 }
@@ -84,4 +101,40 @@ void Decode::set_register(const Bits<5>& addr, const Bits<32>& data)
 {
     int addr_int = bin_to_int<5>(addr);
     registers[addr_int] = data;
+}
+
+void Decode::print_registers() const
+{
+    std::cout << "$zero : " << bin_to_int<32>(registers[0]) << std::endl;
+    //std::cout << "$at   : " << bin_to_int<32>(registers[1]) << std::endl;
+    std::cout << "$v0   : " << bin_to_int<32>(registers[2]) << std::endl;
+    //std::cout << "$v1   : " << bin_to_int<32>(registers[3]) << std::endl;
+    std::cout << "$a0   : " << bin_to_int<32>(registers[4]) << std::endl;
+    std::cout << "$a1   : " << bin_to_int<32>(registers[5]) << std::endl;
+    //std::cout << "$a2   : " << bin_to_int<32>(registers[6]) << std::endl;
+    //std::cout << "$a3   : " << bin_to_int<32>(registers[7]) << std::endl;
+    std::cout << "$t0   : " << bin_to_int<32>(registers[8]) << std::endl;
+    //std::cout << "$t1   : " << bin_to_int<32>(registers[9]) << std::endl;
+    //std::cout << "$t2   : " << bin_to_int<32>(registers[10]) << std::endl;
+    //std::cout << "$t3   : " << bin_to_int<32>(registers[11]) << std::endl;
+    //std::cout << "$t4   : " << bin_to_int<32>(registers[12]) << std::endl;
+    //std::cout << "$t5   : " << bin_to_int<32>(registers[13]) << std::endl;
+    //std::cout << "$t6   : " << bin_to_int<32>(registers[14]) << std::endl;
+    //std::cout << "$t7   : " << bin_to_int<32>(registers[15]) << std::endl;
+    std::cout << "$s0   : " << bin_to_int<32>(registers[16]) << std::endl;
+    std::cout << "$s1   : " << bin_to_int<32>(registers[17]) << std::endl;
+    //std::cout << "$s2   : " << bin_to_int<32>(registers[18]) << std::endl;
+    //std::cout << "$s3   : " << bin_to_int<32>(registers[19]) << std::endl;
+    //std::cout << "$s4   : " << bin_to_int<32>(registers[20]) << std::endl;
+    //std::cout << "$s5   : " << bin_to_int<32>(registers[21]) << std::endl;
+    //std::cout << "$s6   : " << bin_to_int<32>(registers[22]) << std::endl;
+    //std::cout << "$s7   : " << bin_to_int<32>(registers[23]) << std::endl;
+    //std::cout << "$t8   : " << bin_to_int<32>(registers[24]) << std::endl;
+    //std::cout << "$t9   : " << bin_to_int<32>(registers[25]) << std::endl;
+    //std::cout << "$k0   : " << bin_to_int<32>(registers[26]) << std::endl;
+    //std::cout << "$k1   : " << bin_to_int<32>(registers[27]) << std::endl;
+    //std::cout << "$gp   : " << bin_to_int<32>(registers[28]) << std::endl;
+    std::cout << "$sp   : " << bin_to_int<32>(registers[29]) << std::endl;
+    //std::cout << "$fp   : " << bin_to_int<32>(registers[30]) << std::endl;
+    std::cout << "$ra   : " << bin_to_int<32>(registers[31]) << std::endl;
 }

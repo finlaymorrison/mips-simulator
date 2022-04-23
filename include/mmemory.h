@@ -1,9 +1,11 @@
 #pragma once
 
 #include "assembly.h"
+#include "binary_ops.h"
 
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #include <cmath>
 
@@ -36,6 +38,8 @@ public:
     void write_byte(size_t location, const Bits<8>& data);
     Bits<32> read_word(size_t location) const;
     Bits<8> read_byte(size_t location) const;
+
+    std::vector<std::string> memory_dump() const;
 };
 
 size_t convert_bits(const Bits<32>& binary);

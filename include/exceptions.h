@@ -28,3 +28,12 @@ public:
     TestError(const char *msg) noexcept;
     const char* what() const throw() override;
 };
+
+class MemoryError : public std::exception
+{
+private:
+    const char* msg;
+public:
+    MemoryError(const char *msg) noexcept;
+    const char* what() const throw() override;
+};

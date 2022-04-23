@@ -1,3 +1,5 @@
+#define VERBOSE 1
+
 #include "exceptions.h"
 #include "mips.h"
 
@@ -73,6 +75,15 @@ std::vector<Bits<32>> parse_input(const std::vector<std::string>& input_data)
     return out;
 }
 
+void write_binary(std::vector<std::string> data, std::string filepath)
+{
+    std::ofstream binary_file(filepath);
+    for (const std::string& byte : data)
+    {
+        binary_file << byte << std::endl;
+    }
+}
+
 /* 
  * main function of program
  * argc: number of arguments
@@ -88,6 +99,13 @@ int main(int argc, char** argv)
         MIPS mips(1000, 1000);
         mips.initialize_instruction_mem(parsed);
         mips.run();
+        std::vector<std::string> mem_dump = mips.memory_dump();
+        write_binary(mem_dump, argv[2]);
+    }
+    catch(const MemoryError& e)
+    {
+        std::cerr << "error: " << e.what() << std::endl;
+        std::cerr << "memory error" << std::endl;
     }
     catch(const std::exception& e)
     {

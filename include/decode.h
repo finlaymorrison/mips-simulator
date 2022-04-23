@@ -3,6 +3,7 @@
 #include "interstage_regs.h"
 #include "assembly.h"
 #include "binary_ops.h"
+#include "opcodes.h"
 
 #include <cmath>
 
@@ -19,9 +20,11 @@ private:
     Bits<5> get_misc_data(const Bits<32>& instruction, int offset);
     Bits<26> get_addr_const(const Bits<32>& instruction);
 public:
-    Decode() = default;
+    Decode();
     
     IDEX run(IFID ifid_reg, MEMWB memwb_reg);
 
     void set_register(const Bits<5>& addr, const Bits<32>& data);
+
+    void print_registers() const;
 };

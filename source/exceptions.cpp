@@ -26,3 +26,12 @@ const char* TestError::what() const throw()
 {
     return msg;
 }
+
+MemoryError::MemoryError(const char* msg) noexcept :
+    msg(msg)
+{}
+
+const char* MemoryError::what() const throw()
+{
+    return msg;
+}

@@ -3,7 +3,7 @@
 #include <array>
 
 MIPS::MIPS(size_t instruction_capacity, size_t data_capacity) :
-    fetch(instruction_capacity), mem_read(data_capacity)
+    fetch(instruction_capacity), mem_read(data_capacity), t_counter(0)
 {}
 
 void MIPS::initialize_instruction_mem(const std::vector<Bits<32>>& instructions)
@@ -11,38 +11,72 @@ void MIPS::initialize_instruction_mem(const std::vector<Bits<32>>& instructions)
     fetch.write_instructions(instructions);
 }
 
-void MIPS::clock_cycle()
+int MIPS::clock_cycle()
 {
-    ++t_counter;
-    if (t_counter % 10 != 0)
+    if (t_counter % 5 == 0)
     {
-        return;
+        std::cout << "fetch" << std::endl;
+        IFID ifid_n = fetch.run(exmem_reg);
+        ifid_reg = ifid_n;
     }
-    std::cout << "fetch" << std::endl;
-    IFID ifid_n = fetch.run(exmem_reg);
-    std::cout << "decode" << std::endl;
-    IDEX idex_n = decode.run(ifid_reg, memwb_reg);
-    std::cout << "execute" << std::endl;
-    EXMEM exmem_n = execute.run(idex_reg);
-    std::cout << "memread" << std::endl;
-    MEMWB memwb_n = mem_read.run(exmem_reg, fetch);
-    std::cout << "writeback" << std::endl;
-    writeback.run(memwb_n, decode);
+    if (t_counter % 5 == 1)
+    {
+        std::cout << "decode" << std::endl;
+        IDEX idex_n = decode.run(ifid_reg, memwb_reg);
+        idex_reg = idex_n;
+    }
+    if (t_counter % 5 == 2)
+    {
+        std::cout << "execute" << std::endl;
+        EXMEM exmem_n = execute.run(idex_reg);
+        exmem_reg = exmem_n;
+    }
+    if (t_counter % 5 == 3)
+    {
+        std::cout << "memread" << std::endl;
+        MEMWB memwb_n = mem_read.run(exmem_reg, fetch);
+        memwb_reg = memwb_n;
+    }
+    if (t_counter % 5 == 4)
+    {
+        std::cout << "writeback" << std::endl;
+        writeback.run(memwb_reg, decode);
+    }
+    ++t_counter;
+    if (bin_to_int<6>(idex_reg.opcode) == 11)
+    {
+        return 1;
+    }
+    return 0;
+}
 
-
-    ifid_reg = ifid_n;
-    idex_reg = idex_n;
-    exmem_reg = exmem_n;
-    memwb_reg = memwb_n;
+void MIPS::run_step()
+{
+    for (;;)
+    {
+        std::cout << "press enter to step forward... ";
+        std::cin.ignore();
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+    }
 }
 
 void MIPS::run()
 {
     for (;;)
     {
-        std::cout << "type a character to step through clock cycle: ";
-        std::string dummy;
-        std::cin >> dummy;
-        clock_cycle();
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
+        if(clock_cycle()) break;
     }
+}
+
+std::vector<std::string> MIPS::memory_dump() const
+{
+    return mem_read.memory_dump();
 }

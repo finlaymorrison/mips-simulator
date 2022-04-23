@@ -65,3 +65,5 @@ int get_alu_funct(const std::string& opcode_str);
  * return: address of the given register name
  */
 int get_reg_address(const std::string& reg_name);
+
+std::string get_reg_name(int address);

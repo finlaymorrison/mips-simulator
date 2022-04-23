@@ -11,13 +11,26 @@ def get_io(test_path):
     else:
         return None, None
 
+def check_files(f1, f2):
+    with open(f1) as file_1, open(f2) as file_2:
+        f1_data = file_1.readlines()
+        f2_data = file_2.readlines()
+        if len(f1_data) != len(f2_data):
+            print("\tincorrect number of lines")
+            return False
+        for i, (line1, line2) in enumerate(zip(f1_data, f2_data)):
+            if line1 != line2:
+                print("\tmismatch at line {}".format(i+1))
+                return False
+    return True
+
 def test_example(test_path):
     program_name = test_path.split('/')[1]
     test_name = test_path.split('/')[2]
     input, output = get_io(test_path)
     if input and output:
         os.system("./bin/{} {} tmp/out.txt".format(program_name, input))
-        if filecmp.cmp("tmp/out.txt", output):
+        if check_files("tmp/out.txt", output):
             print("\tsuccess: {}".format(test_name))
         else:
             os.system("mkdir -p tmp/{}".format(program_name))

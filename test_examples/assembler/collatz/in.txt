@@ -36,6 +36,7 @@ exit-collatz-largest:
     lw $s3 12($sp)
     lw $ra 16($sp)
     addi $sp $sp 20
+    jr $ra
 
 / procedure collatz($a0 : num)
 collatz:

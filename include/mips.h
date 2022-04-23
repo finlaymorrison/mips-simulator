@@ -9,6 +9,7 @@
 #include "interstage_regs.h"
 
 #include <vector>
+#include <string>
 
 /*
  * controller of the CPU, instruction memory, and data memory
@@ -30,6 +31,9 @@ private:
 public:
     MIPS(size_t instruction_capacity, size_t data_capacity);
     void initialize_instruction_mem(const std::vector<Bits<32>>& instructions);
-    void clock_cycle();
+    int clock_cycle();
+    void run_step();
     void run();
+
+    std::vector<std::string> memory_dump() const;
 };

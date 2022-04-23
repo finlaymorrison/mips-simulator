@@ -90,7 +90,7 @@ std::map<std::string, int> extract_labels(const std::vector<std::string>& lines)
     {
         if (line.back() == ':')
         {
-            labels[line.substr(0, line.size()-1)] = line_num;
+            labels[line.substr(0, line.size()-1)] = line_num*4;
         }
         else
         {

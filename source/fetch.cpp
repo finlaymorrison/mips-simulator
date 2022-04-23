@@ -26,7 +26,6 @@ void Fetch::inc_pc()
 {
     /* increment 4 times since memory is byte addressed */
     PC = inc_word(inc_word(inc_word(inc_word(PC))));
-    int PC_int = bin_to_int<32>(PC);
 }
 
 void Fetch::set_pc(const Bits<32>& new_pc_value)
@@ -36,15 +35,21 @@ void Fetch::set_pc(const Bits<32>& new_pc_value)
 
 IFID Fetch::run(EXMEM exmem_reg)
 {
-    std::cout << "section a" << std::endl;
-    inc_pc();
 
     IFID reg;
 
-    std::cout << "section b" << std::endl;
     reg.instruction = fetch_instruction();
+
+    std::cout << "\tPC = " << bin_to_int<32>(PC) << " -> " << bit_str<32>(reg.instruction) << std::endl;
+
+    inc_pc();
+
     reg.instruction_addr = PC;
 
-    std::cout << "section c" << std::endl;
     return reg;
+}
+
+void Fetch::print_pc()
+{
+    std::cout << "PC : " << bit_str<32>(PC) << std::endl;
 }

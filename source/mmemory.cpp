@@ -26,6 +26,11 @@ void Memory::write_word(size_t location, const Bits<32>& data)
 
 void Memory::write_byte(size_t location, const Bits<8>& data)
 {
+    if (location > buffer.size() || location < 0)
+    {
+        //throw MemoryError("out of bounds memory write");
+        return;
+    }
     buffer[location] = data;
 }
 
@@ -42,6 +47,11 @@ Bits<32> Memory::read_word(size_t location) const
 
 Bits<8> Memory::read_byte(size_t location) const
 {
+    if (location > buffer.size() || location < 0)
+    {
+        //throw MemoryError("out of bounds memory read");
+        return Bits<8>();
+    }
     return buffer[location];
 }
 
@@ -63,4 +73,14 @@ Bits<32> Memory::read_word(const Bits<32>& location) const
 Bits<8> Memory::read_byte(const Bits<32>& location) const
 {
     return read_byte(convert_bits(location));
+}
+
+std::vector<std::string> Memory::memory_dump() const
+{
+    std::vector<std::string> out;
+    for (const Bits<8>& byte : buffer)
+    {
+        out.push_back(bit_str<8>(byte));
+    }
+    return out;
 }
