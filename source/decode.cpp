@@ -30,7 +30,7 @@ Bits<6> Decode::get_op_data(const Bits<32>& instruction, int offset)
     return op_data;
 }
 
-Bits<5> get_misc_data(const Bits<32>& instruction, int offset)
+Bits<5> Decode::get_misc_data(const Bits<32>& instruction, int offset)
 {
     Bits<5> op_data;
     for (int i = 0; i < 5; ++i)
@@ -40,7 +40,7 @@ Bits<5> get_misc_data(const Bits<32>& instruction, int offset)
     return op_data;
 }
 
-Bits<26> get_addr_const(const Bits<32>& instruction)
+Bits<26> Decode::get_addr_const(const Bits<32>& instruction)
 {
     Bits<26> op_data;
     for (int i = 0; i < 26; ++i)
@@ -65,12 +65,16 @@ IDEX Decode::run(IFID ifid_reg, MEMWB memwb_reg)
 
     idex_reg.reg_a_data = reg_a_add ? registers[reg_a_add] : Bits<32>();
     idex_reg.reg_b_data = reg_b_add ? registers[reg_b_add] : Bits<32>();
-    idex_reg.const_data = const_data;
+    idex_reg.const_data = sign_extend<16,32>(const_data);
     idex_reg.opcode = opcode;
     idex_reg.aluop = aluop;
     idex_reg.reg_dest_add = reg_dest_add;
     idex_reg.shamt = shamt;
     idex_reg.addr = addr;
+
+    /* for sw instruction */
+    size_t reg_dest_add_num = get_reg_add(ifid_reg.instruction, 6);
+    idex_reg.reg_dest_data = registers[reg_dest_add_num];
 
     return idex_reg;
 }

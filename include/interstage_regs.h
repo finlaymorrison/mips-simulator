@@ -20,7 +20,10 @@ struct IDEX
 
     Bits<32> reg_a_data;
     Bits<32> reg_b_data;
-    Bits<16> const_data;
+    Bits<32> const_data;
+
+    /* for sw instruction */
+    Bits<32> reg_dest_data;
 };
 
 struct EXMEM
@@ -28,9 +31,11 @@ struct EXMEM
     Bits<6> opcode;
     Bits<5> reg_dest_add;
 
+    Bits<32> br_addr;
+
     bool zero;
     Bits<32> alures;
-    Bits<32> jmppc;
+    Bits<32> addr;
 };
 
 struct MEMWB

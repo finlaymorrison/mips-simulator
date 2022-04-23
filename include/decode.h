@@ -2,6 +2,7 @@
 
 #include "interstage_regs.h"
 #include "assembly.h"
+#include "binary_ops.h"
 
 #include <cmath>
 
