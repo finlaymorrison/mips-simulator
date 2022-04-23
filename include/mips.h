@@ -1,8 +1,12 @@
 #pragma once
 
 #include "assembly.h"
-#include "mmemory.h"
-#include "cpu.h"
+#include "fetch.h"
+#include "decode.h"
+#include "execute.h"
+#include "mem_read.h"
+#include "writeback.h"
+#include "interstage_regs.h"
 
 #include <vector>
 
@@ -12,9 +16,18 @@
 class MIPS
 {
 private:
-    CPU cpu;
-    Memory instruction_memory;
-    Memory data_memory;
+    Fetch fetch;
+    Decode decode;
+    Execute execute;
+    MemRead mem_read;
+    Writeback writeback;
+
+    IFID ifid_reg;
+    IDEX idex_reg;
+    EXMEM exmem_reg;
+    MEMWB memwb_reg;
 public:
-    MIPS() = default;
+    MIPS(size_t instruction_capacity, size_t data_capacity);
+    void initialize_instruction_mem(const std::vector<Bits<32>>& instructions);
+    void clock_cycle();
 };

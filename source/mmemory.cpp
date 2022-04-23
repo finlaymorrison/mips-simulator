@@ -4,7 +4,7 @@ Memory::Memory(size_t mem_size) :
     buffer(mem_size)
 {}
 
-size_t Memory::convert_bits(const Bits<32>& binary) const
+size_t convert_bits(const Bits<32>& binary)
 {
     size_t num = 0;
     for (int i = 0; i < binary.size(); ++i)
