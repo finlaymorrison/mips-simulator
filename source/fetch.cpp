@@ -30,8 +30,11 @@ void Fetch::set_pc(const Bits<32>& new_pc_value)
 
 IFID Fetch::run(EXMEM exmem_reg)
 {
-    IFID reg;
     inc_pc();
+
+    IFID reg;
+
     reg.instruction = fetch_instruction();
+
     return reg;
 }
