@@ -17,6 +17,8 @@ struct IDEX
     Bits<6> opcode;
     Bits<6> aluop;
     Bits<5> shamt;
+    Bits<5> reg_a_add;
+    Bits<5> reg_b_add;
     Bits<5> reg_dest_add;
     Bits<26> addr;
 
@@ -54,3 +56,13 @@ struct MEMWB
     Bits<5> reg_dest_add;
     Bits<6> opcode;
 };
+
+struct InterstageReg
+{
+    Bits<32> instruction;
+    Bits<32> reg_a;
+    Bits<32> reg_b;
+    Bits<32> reg_c;
+};
+
+MEMWB empty_memwb();

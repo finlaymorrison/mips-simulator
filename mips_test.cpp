@@ -98,7 +98,7 @@ int main(int argc, char** argv)
         std::vector<Bits<32>> parsed = parse_input(data);
         MIPS mips(1000, 1000);
         mips.initialize_instruction_mem(parsed);
-        mips.run();
+        mips.run_step();
         std::vector<std::string> mem_dump = mips.memory_dump();
         write_binary(mem_dump, argv[2]);
     }

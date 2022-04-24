@@ -61,7 +61,7 @@ Bits<26> Decode::get_addr_const(const Bits<32>& instruction)
     return op_data;
 }
 
-IDEX Decode::run(IFID ifid_reg, MEMWB memwb_reg)
+IDEX Decode::run(IFID ifid_reg)
 {
     size_t reg_a_add = get_reg_add(ifid_reg.instruction, 11);
     size_t reg_b_add = get_reg_add(ifid_reg.instruction, 16);
