@@ -10,13 +10,14 @@ INC_DIR := include
 ASSEMBLER := $(BIN_DIR)/assembler
 MEMORY := $(BIN_DIR)/memory
 MIPS := $(BIN_DIR)/mips
+FULLINT := $(BIN_DIR)/full-integration
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 INC := $(wildcard $(INC_DIR)/*.h)
 
 .PHONY: all clean
 
-all: $(ASSEMBLER) $(MEMORY) $(MIPS)
+all: $(ASSEMBLER) $(MEMORY) $(MIPS) $(FULLINT)
 
 clean:
 	$(RM) -r $(BIN_DIR) $(OBJ_DIR)
@@ -28,6 +29,9 @@ $(MEMORY): memory_test.cpp $(OBJ) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(MIPS): mips_test.cpp $(OBJ) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+$(FULLINT): full_integration.cpp $(OBJ) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(INC) | $(OBJ_DIR)

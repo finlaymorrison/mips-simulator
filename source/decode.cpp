@@ -91,12 +91,12 @@ void Decode::set_register(const Bits<5>& addr, const Bits<32>& data)
 
 void Decode::print_registers() const
 {
-    std::cout << "$zero : " << bin_to_int<32>(registers[0]) << std::endl;
+    //std::cout << "$zero : " << bin_to_int<32>(registers[0]) << std::endl;
     //std::cout << "$at   : " << bin_to_int<32>(registers[1]) << std::endl;
-    std::cout << "$v0   : " << bin_to_int<32>(registers[2]) << std::endl;
+    //td::cout << "$v0   : " << bin_to_int<32>(registers[2]) << std::endl;
     //std::cout << "$v1   : " << bin_to_int<32>(registers[3]) << std::endl;
     std::cout << "$a0   : " << bin_to_int<32>(registers[4]) << std::endl;
-    std::cout << "$a1   : " << bin_to_int<32>(registers[5]) << std::endl;
+    //std::cout << "$a1   : " << bin_to_int<32>(registers[5]) << std::endl;
     //std::cout << "$a2   : " << bin_to_int<32>(registers[6]) << std::endl;
     //std::cout << "$a3   : " << bin_to_int<32>(registers[7]) << std::endl;
     std::cout << "$t0   : " << bin_to_int<32>(registers[8]) << std::endl;
@@ -120,7 +120,7 @@ void Decode::print_registers() const
     //std::cout << "$k0   : " << bin_to_int<32>(registers[26]) << std::endl;
     //std::cout << "$k1   : " << bin_to_int<32>(registers[27]) << std::endl;
     //std::cout << "$gp   : " << bin_to_int<32>(registers[28]) << std::endl;
-    std::cout << "$sp   : " << bin_to_int<32>(registers[29]) << std::endl;
+    //std::cout << "$sp   : " << bin_to_int<32>(registers[29]) << std::endl;
     //std::cout << "$fp   : " << bin_to_int<32>(registers[30]) << std::endl;
-    std::cout << "$ra   : " << bin_to_int<32>(registers[31]) << std::endl;
+    //std::cout << "$ra   : " << bin_to_int<32>(registers[31]) << std::endl;
 }

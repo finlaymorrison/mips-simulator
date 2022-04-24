@@ -28,6 +28,8 @@ private:
     InterstageReg idex_reg;
     InterstageReg exmem_reg;
     InterstageReg memwb_reg;
+    bool inc;
+    void check_pipeline(InterstageReg& ifid_n, InterstageReg& idex_n, InterstageReg& exmem_n, InterstageReg& memwb_n);
 public:
     MIPS(size_t instruction_capacity, size_t data_capacity);
     void initialize_instruction_mem(const std::vector<Bits<32>>& instructions);

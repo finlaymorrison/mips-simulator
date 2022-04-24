@@ -30,6 +30,7 @@ void Fetch::inc_pc()
 
 void Fetch::set_pc(const Bits<32>& new_pc_value)
 {
+    std::cout << "set pc:" << bit_str<32>(new_pc_value) << std::endl;
     PC = new_pc_value;
 }
 
@@ -40,10 +41,8 @@ InterstageReg Fetch::run()
     reg.reg_a_data = empty_bits<32>();
     reg.reg_b_data = empty_bits<32>();
     reg.reg_c_data = empty_bits<32>();
-
     reg.instruction = fetch_instruction();
-    inc_pc();
-    reg.instruction_addr = PC;
+    reg.instruction_addr = inc_word(inc_word(inc_word(inc_word(PC))));
 
     std::cout << "\tPC = " << bin_to_int<32>(PC) << " -> " << bit_str<32>(reg.instruction) << std::endl;
 
