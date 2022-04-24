@@ -33,18 +33,19 @@ void Fetch::set_pc(const Bits<32>& new_pc_value)
     PC = new_pc_value;
 }
 
-IFID Fetch::run(EXMEM exmem_reg)
+InterstageReg Fetch::run()
 {
 
-    IFID reg;
+    InterstageReg reg;
+    reg.reg_a_data = empty_bits<32>();
+    reg.reg_b_data = empty_bits<32>();
+    reg.reg_c_data = empty_bits<32>();
 
     reg.instruction = fetch_instruction();
+    inc_pc();
+    reg.instruction_addr = PC;
 
     std::cout << "\tPC = " << bin_to_int<32>(PC) << " -> " << bit_str<32>(reg.instruction) << std::endl;
-
-    inc_pc();
-
-    reg.instruction_addr = PC;
 
     return reg;
 }

@@ -61,40 +61,26 @@ Bits<26> Decode::get_addr_const(const Bits<32>& instruction)
     return op_data;
 }
 
-IDEX Decode::run(IFID ifid_reg, MEMWB memwb_reg)
+InterstageReg Decode::run(const InterstageReg& ifid_reg)
 {
-    size_t reg_a_add = get_reg_add(ifid_reg.instruction, 11);
-    size_t reg_b_add = get_reg_add(ifid_reg.instruction, 16);
-    Bits<16> const_data = get_const_data(ifid_reg.instruction);
-    Bits<6> opcode = get_op_data(ifid_reg.instruction, 0);
-    Bits<6> aluop = get_op_data(ifid_reg.instruction, 26);
-    Bits<5> reg_dest_add = get_misc_data(ifid_reg.instruction, 6);
-    Bits<5> shamt = get_misc_data(ifid_reg.instruction, 21);
-    Bits<26> addr = get_addr_const(ifid_reg.instruction);
+    InterstageReg reg;
 
-    IDEX idex_reg;
+    reg.instruction = ifid_reg.instruction;
+    reg.instruction_addr = ifid_reg.instruction_addr;
 
-    idex_reg.reg_a_data = reg_a_add ? registers[reg_a_add] : Bits<32>();
-    idex_reg.reg_b_data = reg_b_add ? registers[reg_b_add] : Bits<32>();
-    idex_reg.const_data = sign_extend<16,32>(const_data);
-    idex_reg.opcode = opcode;
-    idex_reg.aluop = aluop;
-    idex_reg.reg_dest_add = reg_dest_add;
-    idex_reg.shamt = shamt;
-    idex_reg.addr = addr;
-    idex_reg.instruction_addr = ifid_reg.instruction_addr;
+    size_t reg_a_add = get_reg_add(ifid_reg.instruction, 6);
+    size_t reg_b_add = get_reg_add(ifid_reg.instruction, 11);
+    size_t reg_c_add = get_reg_add(ifid_reg.instruction, 16);
 
-    /* for sw instruction */
-    size_t reg_dest_add_num = get_reg_add(ifid_reg.instruction, 6);
-    idex_reg.reg_dest_data = reg_dest_add_num ? registers[reg_dest_add_num] : Bits<32>();
+    reg.reg_a_data = reg_a_add ? registers[reg_a_add] : Bits<32>();
+    reg.reg_b_data = reg_b_add ? registers[reg_b_add] : Bits<32>();
+    reg.reg_c_data = reg_c_add ? registers[reg_c_add] : Bits<32>();
 
-    std::cout << '\t' << get_reg_name(reg_dest_add_num) << " = " << bin_to_int<32>(idex_reg.reg_dest_data) << std::endl;
-    std::cout << '\t' << get_reg_name(reg_a_add) << " = " << bin_to_int<32>(idex_reg.reg_a_data) << std::endl;
-    std::cout << '\t' << get_reg_name(reg_b_add) << " = " << bin_to_int<32>(idex_reg.reg_b_data) << std::endl;
+    std::cout << '\t' << get_reg_name(reg_a_add) << " = " << bin_to_int<32>(reg.reg_a_data) << std::endl;
+    std::cout << '\t' << get_reg_name(reg_b_add) << " = " << bin_to_int<32>(reg.reg_b_data) << std::endl;
+    std::cout << '\t' << get_reg_name(reg_c_add) << " = " << bin_to_int<32>(reg.reg_c_data) << std::endl;
 
-    print_registers();
-
-    return idex_reg;
+    return reg;
 }
 
 void Decode::set_register(const Bits<5>& addr, const Bits<32>& data)

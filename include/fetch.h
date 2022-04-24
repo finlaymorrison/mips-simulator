@@ -23,7 +23,7 @@ public:
     void inc_pc();
     void set_pc(const Bits<32>& new_pc_value);
     Bits<32> fetch_instruction() const;
-    IFID run(EXMEM exmem_reg);
+    InterstageReg run();
 
     void print_pc();
 };

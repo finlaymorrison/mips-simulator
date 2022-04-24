@@ -12,5 +12,5 @@ private:
 public:
     Execute() = default;
 
-    EXMEM run(IDEX idex_reg);
+    InterstageReg run(InterstageReg idex_reg);
 };

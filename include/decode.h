@@ -22,7 +22,7 @@ private:
 public:
     Decode();
     
-    IDEX run(IFID ifid_reg, MEMWB memwb_reg);
+    InterstageReg run(const InterstageReg& ifid_reg);
 
     void set_register(const Bits<5>& addr, const Bits<32>& data);
 

@@ -15,6 +15,6 @@ private:
 public:
     MemRead(size_t data_capacity);
 
-    MEMWB run(EXMEM exmem_reg, Fetch& fetch);
+    InterstageReg run(InterstageReg exmem_reg, Fetch& fetch);
     std::vector<std::string> memory_dump() const;
 };

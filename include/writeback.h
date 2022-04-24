@@ -9,5 +9,5 @@ private:
 public:
     Writeback() = default;
 
-    void run(MEMWB memwb_reg, Decode& decode);
+    void run(InterstageReg memwb_reg, Decode& decode);
 };

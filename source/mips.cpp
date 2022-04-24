@@ -4,7 +4,12 @@
 
 MIPS::MIPS(size_t instruction_capacity, size_t data_capacity) :
     fetch(instruction_capacity), mem_read(data_capacity), t_counter(0)
-{}
+{
+    clear(ifid_reg);
+    clear(idex_reg);
+    clear(exmem_reg);
+    clear(memwb_reg);
+}
 
 void MIPS::initialize_instruction_mem(const std::vector<Bits<32>>& instructions)
 {
@@ -16,25 +21,25 @@ int MIPS::clock_cycle()
     if (t_counter % 5 == 0)
     {
         std::cout << "fetch" << std::endl;
-        IFID ifid_n = fetch.run(exmem_reg);
+        InterstageReg ifid_n = fetch.run();
         ifid_reg = ifid_n;
     }
     if (t_counter % 5 == 1)
     {
         std::cout << "decode" << std::endl;
-        IDEX idex_n = decode.run(ifid_reg, memwb_reg);
+        InterstageReg idex_n = decode.run(ifid_reg);
         idex_reg = idex_n;
     }
     if (t_counter % 5 == 2)
     {
         std::cout << "execute" << std::endl;
-        EXMEM exmem_n = execute.run(idex_reg);
+        InterstageReg exmem_n = execute.run(idex_reg);
         exmem_reg = exmem_n;
     }
     if (t_counter % 5 == 3)
     {
         std::cout << "memread" << std::endl;
-        MEMWB memwb_n = mem_read.run(exmem_reg, fetch);
+        InterstageReg memwb_n = mem_read.run(exmem_reg, fetch);
         memwb_reg = memwb_n;
     }
     if (t_counter % 5 == 4)
@@ -43,7 +48,8 @@ int MIPS::clock_cycle()
         writeback.run(memwb_reg, decode);
     }
     ++t_counter;
-    if (bin_to_int<6>(idex_reg.opcode) == 11)
+    Bits<6> opcode = extract_bits<32,6>(exmem_reg.instruction, 0);
+    if (bin_to_int<6>(opcode) == 11)
     {
         return 1;
     }

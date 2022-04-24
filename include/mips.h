@@ -24,10 +24,10 @@ private:
     MemRead mem_read;
     Writeback writeback;
 
-    IFID ifid_reg;
-    IDEX idex_reg;
-    EXMEM exmem_reg;
-    MEMWB memwb_reg;
+    InterstageReg ifid_reg;
+    InterstageReg idex_reg;
+    InterstageReg exmem_reg;
+    InterstageReg memwb_reg;
 public:
     MIPS(size_t instruction_capacity, size_t data_capacity);
     void initialize_instruction_mem(const std::vector<Bits<32>>& instructions);

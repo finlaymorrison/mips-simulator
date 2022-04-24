@@ -60,79 +60,95 @@ Bits<32> Execute::rtype(Bits<6> aluop, Bits<32> reg_dest_data, Bits<32> reg_a_da
     return res;
 }
 
-EXMEM Execute::run(IDEX idex_reg)
+InterstageReg Execute::run(InterstageReg idex_reg)
 {
-    int opcode_num = bin_to_int<6>(idex_reg.opcode);
+    /* creating register to return and initializing its values */
+    InterstageReg reg;
+    reg.instruction = idex_reg.instruction;
+    reg.instruction_addr = idex_reg.instruction_addr;
+    reg.reg_a_data = idex_reg.reg_a_data;
+    reg.reg_b_data = idex_reg.reg_b_data;
+    reg.reg_c_data = idex_reg.reg_c_data;
 
-    EXMEM ret;
-    ret.opcode = idex_reg.opcode;
-    ret.reg_dest_add = idex_reg.reg_dest_add;
-    ret.addr = sign_extend<26,32>(idex_reg.addr);
-    ret.br_addr = idex_reg.const_data;
-    ret.aluop = idex_reg.aluop;
-    ret.instruction_addr = idex_reg.instruction_addr;
-    ret.reg_dest_data = idex_reg.reg_dest_data;
+    Bits<6> opcode = extract_bits<32,6>(idex_reg.instruction, 0);
+    int opcode_num = bin_to_int<6>(opcode);
 
-    Bits<32> tmp;
     switch (opcode_num)
     {
-    case 0:
+    case 0:{
         /* r-type instruction */
-        ret.alures = rtype(idex_reg.aluop, idex_reg.reg_dest_data, idex_reg.reg_a_data, idex_reg.reg_b_data, idex_reg.shamt);
-        break;
-    case 1:
-        /* addi */
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, idex_reg.const_data, false);
-        break;
-    case 2:
-        /* andi */
-        ret.alures = bitwise_and<32>(idex_reg.reg_a_data, idex_reg.const_data);
-        break;
-    case 3:
-        /* ori */
-        ret.alures = bitwise_or<32>(idex_reg.reg_a_data, idex_reg.const_data);
-        break;
-    case 4:
-        /* bne */
-        tmp = bitwise_not<32>(idex_reg.reg_a_data);
-        ret.alures = add_bin_nums<32>(idex_reg.reg_dest_data, tmp, true);
-        break;
-    case 5:
-        /* beq */
-        tmp = bitwise_not<32>(idex_reg.reg_a_data);
-        ret.alures = add_bin_nums<32>(idex_reg.reg_dest_data, tmp, true);
-        break;
-    case 6:
-        /* j */
-        /* not required for j instruction, so setting to this as default */
-        ret.alures = idex_reg.reg_a_data;
-        break;
-    case 7:
-        /* lw */
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, idex_reg.const_data, false);
-        break;
-    case 8:
-        /* sw */
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, idex_reg.const_data, false);
-        break;
-    case 9:
-        /* subi */
-        tmp = bitwise_not<32>(idex_reg.const_data);
-        ret.alures = add_bin_nums<32>(idex_reg.reg_a_data, tmp, true);
-        break;
-    case 10:
-        /* jal */
-        ret.alures = idex_reg.reg_a_data;
-        break;
-    case 11:
-        /* exit */
-        /* not required for exit instruction, so setting to this as default */
-        ret.alures = idex_reg.reg_a_data;
+        Bits<6> aluop = extract_bits<32,6>(idex_reg.instruction, 26);
+        Bits<5> shamt = extract_bits<32,5>(idex_reg.instruction, 21);
+        reg.reg_b_data = rtype(aluop, idex_reg.reg_a_data, idex_reg.reg_b_data, idex_reg.reg_c_data, shamt);
         break;
     }
-    ret.zero = is_zero<32>(ret.alures);
+    case 1:{
+        /* addi */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_b_data, const_data, false);
+        break;
+    }
+    case 2:{
+        /* andi */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        reg.reg_b_data = bitwise_and<32>(idex_reg.reg_b_data, const_data);
+        break;
+    }
+    case 3:{
+        /* ori */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        reg.reg_b_data = bitwise_or<32>(idex_reg.reg_b_data, const_data);
+        break;
+    }
+    case 4:{
+        /* bne */
+        Bits<32> not_reg_b = bitwise_not<32>(idex_reg.reg_b_data);
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_a_data, not_reg_b, true);
+        break;
+    }
+    case 5:{
+        /* bne */
+        Bits<32> not_reg_b = bitwise_not<32>(idex_reg.reg_b_data);
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_a_data, not_reg_b, true);
+        break;
+    }
+    case 6:{
+        /* j */
+        /* do nothing */
+        break;
+    }
+    case 7:{
+        /* lw */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_b_data, const_data, false);
+        break;
+    }
+    case 8:{
+        /* sw */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_b_data, const_data, false);
+        break;
+    }
+    case 9:{
+        /* subi */
+        Bits<32> const_data = sign_extend<16,32>(extract_bits<32,16>(idex_reg.instruction, 16));
+        Bits<32> not_const = bitwise_not<32>(const_data);
+        reg.reg_b_data = add_bin_nums<32>(idex_reg.reg_b_data, not_const, true);
+        break;
+    }
+    case 10:{
+        /* jal */
+        /* do nothing */
+        break;
+    }
+    case 11:{
+        /* exit */
+        /* do nothing */
+        break;
+    }
+    }
 
-    std::cout << "\tres = " << bin_to_int<32>(ret.alures) << std::endl;
+    std::cout << "\tres = " << bin_to_int<32>(reg.reg_b_data) << std::endl;
 
-    return ret;
+    return reg;
 }
