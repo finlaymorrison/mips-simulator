@@ -14,7 +14,7 @@ private:
 
     size_t get_reg_add(const Bits<32>& instruction, int offset);
 
-    /* could use tempates with NTTAs but its not worth the hassle */
+    /* could use tempates with NTTAs but oh well */
     Bits<16> get_const_data(const Bits<32>& instruction);
     Bits<6> get_op_data(const Bits<32>& instruction, int offset);
     Bits<5> get_misc_data(const Bits<32>& instruction, int offset);

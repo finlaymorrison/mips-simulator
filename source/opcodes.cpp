@@ -41,6 +41,7 @@ InsType get_ins_type(const std::string& opcode_str)
     }
     else
     {
+        std::cout << opcode_str << std::endl;
         throw AsmError("invalid opcode string");
     }
 }

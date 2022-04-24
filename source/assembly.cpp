@@ -120,7 +120,6 @@ Bits<32> parse_asm_line(const std::string& line, const std::map<std::string, int
     substitute_labels(parts, labels);
 
     Bits<32> word;
-
     InsType ins_type = add_opcode(parts[0], word);
     bool success = false;
     switch (ins_type)

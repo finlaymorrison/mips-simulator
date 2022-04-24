@@ -1,14 +1,14 @@
    multiply:
-0       subi $sp $sp 4
-4       sw $s0 0($sp)
-8       add $s0 $a1 $zero
-12       add $t1 $zero $zero
+       subi $sp $sp 4
+       sw $s0 0($sp)
+       add $s0 $a1 $zero
+       add $t1 $zero $zero
    loop:
-16       beq $s0 $zero exit
-20       add $t1 $t1 $a1
-24       subi $s0 $s0 1
-28       j loop
+       beq $s0 $zero exit
+       add $t1 $t1 $a1
+       subi $s0 $s0 1
+       j loop
    exit:
-32       lw $s0 0($sp)
-36       addi $sp $sp 4
-40       jr $ra
+       lw $s0 0($sp)
+       addi $sp $sp 4
+       jr $ra

@@ -1,6 +1,6 @@
 / setup stack at memory address 1000 and call function
     addi $sp $zero 1000
-    addi $a0 $zero 100
+    addi $a0 $zero 200
     jal square-list
     exit
 
